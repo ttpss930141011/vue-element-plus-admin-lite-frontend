@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import { loginApi, getUserInfoApi, singoutApi } from './api'
+import { registerApi, loginApi, setEmailApi, getUserInfoApi, singoutApi } from './api'
 // export function userLogin (data) {
 //   return request({
 //     url: '/vue-admin-template/user/login',
@@ -22,6 +22,22 @@ import { loginApi, getUserInfoApi, singoutApi } from './api'
 //     method: 'post'
 //   })
 // }
+export function userRegister(data) {
+  return request({
+    url: registerApi,
+    method: 'post',
+    data
+  })
+}
+
+export function setEmail(data) {
+  return request({
+    url: setEmailApi,
+    method: 'post',
+    data
+  })
+}
+
 export function userLogin(data) {
   return request({
     url: loginApi,

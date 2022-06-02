@@ -132,6 +132,7 @@ export default {
             router.push({ path: redirect.value || '/' })
             loading.value = false
           }).catch(() => {
+            console.log('login fail!!!')
             loading.value = false
           })
         } else {

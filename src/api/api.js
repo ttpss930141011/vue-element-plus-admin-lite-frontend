@@ -1,5 +1,6 @@
 const loginApi = '/users/login'
 const singoutApi = '/users/singout'
+const setEmailApi = 'users/setEmail'
 const registerApi = '/users/register'
 const getListApi = '/users/list'
 const modifyApi = '/users/modify'
@@ -15,6 +16,7 @@ const getPositionInfoByIdApi = '/position/getPositionInfo'
 export {
   loginApi,
   registerApi,
+  setEmailApi,
   getListApi,
   modifyApi,
   deleteApi,

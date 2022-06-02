@@ -37,7 +37,7 @@ service.interceptors.response.use(
     console.log(res)
     if (res.code !== 20000) {
       ElMessage({
-        message: res.message || 'Error',
+        message: res.data.message || 'Error',
         type: 'error',
         duration: 5 * 1000
       })
