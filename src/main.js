@@ -7,6 +7,7 @@ import '@/styles/index.scss'
 import 'element-plus/dist/index.css'
 import '@/router/permission'
 import SvgIcon from '@/components/SvgIcon'
+import DataTable from './views/Index'
 // main.js
 import { Expand, ChatRound, ArrowDown, CaretBottom, Close, RefreshLeft } from '@element-plus/icons-vue'
 import '@/icons'// svg component
@@ -22,6 +23,7 @@ app.component('expand', Expand)
   .component('caret-bottom', CaretBottom)
   .component('close', Close)
   .component('refresh-left', RefreshLeft)
+  .component('ElementDatatablePlus', DataTable)
 
 // if (process.env.NODE_ENV === 'production') {
 // const { mockXHR } = require('../mock')

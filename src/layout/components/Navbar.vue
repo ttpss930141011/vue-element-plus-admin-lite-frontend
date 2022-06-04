@@ -13,8 +13,8 @@
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar" />
-          <div class="user-name">admin</div>
-          <el-icon class="el-icon-caret-bottom ">
+          <div class="user-name">Hi, {{ username }}</div>
+          <el-icon class="el-icon-caret-bottom">
             <arrow-down />
           </el-icon>
         </div>
@@ -23,11 +23,14 @@
             <router-link to="/">
               <el-dropdown-item>Home</el-dropdown-item>
             </router-link>
-            <a target="_blank" href="https://github.com/LSZ579/vue-elementPlus-admin">
+            <a
+              target="_blank"
+              href="https://github.com/LSZ579/vue-elementPlus-admin"
+            >
               <el-dropdown-item>Github</el-dropdown-item>
             </a>
-            <el-dropdown-item  >
-              <span @click="logout"  style="display:block;">Log Out</span>
+            <el-dropdown-item>
+              <span @click="logout" style="display: block">Log Out</span>
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
@@ -40,14 +43,14 @@
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import { useStore } from 'vuex'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 export default {
   components: {
     Breadcrumb,
     Hamburger
   },
-  setup () {
+  setup() {
     const store = useStore()
     const router = useRouter()
     const route = useRoute()
@@ -56,6 +59,7 @@ export default {
     const toggleSideBar = () => {
       store.dispatch('app/toggleSideBar')
     }
+    const username = ref(store.getters.name)
     // 退出登录
     const logout = async () => {
       await store.dispatch('tagsView/delAllVisitedViews')
@@ -74,6 +78,7 @@ export default {
     return {
       sidebar,
       logout,
+      username,
       toggleSideBar,
       avatar,
       refresh
@@ -160,7 +165,7 @@ export default {
           height: 40px;
           border-radius: 50%;
         }
-        .user-name{
+        .user-name {
           margin-left: 5px;
         }
         .el-icon-caret-bottom {

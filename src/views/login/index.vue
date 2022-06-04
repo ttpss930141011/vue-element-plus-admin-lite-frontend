@@ -10,8 +10,16 @@
     >
       <div class="title-container">
         <el-row>
-          <el-col :span="12"><router-link to="/login"><h3 class="title">Login</h3></router-link></el-col>
-          <el-col :span="12"><router-link to="/register" replace><h3 class="title">Register</h3></router-link></el-col>
+          <el-col :span="12"
+            ><router-link to="/login"
+              ><h3 class="title">Login</h3></router-link
+            ></el-col
+          >
+          <el-col :span="12"
+            ><router-link to="/register" replace
+              ><h3 class="title">Register</h3></router-link
+            ></el-col
+          >
         </el-row>
       </div>
 
@@ -46,19 +54,22 @@
           @keyup.enter="handleLogin"
         />
         <span class="show-pwd" @click="showPwd">
-          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+          <svg-icon
+            :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
+          />
         </span>
       </el-form-item>
 
       <el-button
         :loading="loading"
         type="primary"
-        style="width:100%;margin-bottom:30px;"
+        style="width: 100%; margin-bottom: 30px"
         @click.prevent="handleLogin"
-      >Login</el-button>
+        >Login</el-button
+      >
 
       <div class="tips">
-        <span style="margin-right:20px;">Account: admin</span>
+        <span style="margin-right: 20px">Account: admin</span>
         <span>password: any</span>
       </div>
     </el-form>
@@ -66,13 +77,14 @@
 </template>
 
 <script>
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { validAccount } from '@/utils/validate'
 import { reactive, ref, toRef, nextTick, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 export default {
   name: 'Login',
-  setup () {
+  setup() {
     const router = useRouter()
     const route = useRoute()
     const store = useStore()
@@ -99,8 +111,12 @@ export default {
         password: 'abc5383101'
       },
       loginRules: {
-        account: [{ required: true, trigger: 'blur', validator: validateAccount }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        account: [
+          { required: true, trigger: 'blur', validator: validateAccount }
+        ],
+        password: [
+          { required: true, trigger: 'blur', validator: validatePassword }
+        ]
       },
       loading: false,
       passwordType: 'password',
@@ -125,16 +141,57 @@ export default {
       redirect.value = routes.query && routes.query.redirect
     })
     const handleLogin = async () => {
-      refForm.value.validate(valid => {
+      refForm.value.validate((valid) => {
         if (valid) {
           loading.value = true
-          store.dispatch('user/login', loginForm.value).then(() => {
-            router.push({ path: redirect.value || '/' })
-            loading.value = false
-          }).catch(() => {
-            console.log('login fail!!!')
-            loading.value = false
-          })
+          store
+            .dispatch('user/login', loginForm.value)
+            .then((data) => {
+              const { emailIsExist, account } = data
+              router.push({ path: redirect.value || '/' })
+              loading.value = false
+              if (!emailIsExist) {
+                ElMessageBox.prompt(
+                  'You did not set your email! Please input your e-mail.',
+                  `Hello ${account}!`,
+                  {
+                    confirmButtonText: 'OK',
+                    cancelButtonText: 'Cancel',
+                    inputPattern:
+                      /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
+                    inputErrorMessage: 'Invalid Email'
+                  }
+                )
+                  .then(({ value }) => {
+                    console.log(value)
+                    store
+                      .dispatch('user/setEmail', value)
+                      .then(() => {
+                        ElMessage({
+                          type: 'success',
+                          message: `Your email is:${value}`
+                        })
+                      })
+                      .catch((e) => {
+                        console.log(e)
+                        ElMessage({
+                          type: 'warning',
+                          message: 'Set email occured error!'
+                        })
+                      })
+                  })
+                  .catch(() => {
+                    ElMessage({
+                      type: 'info',
+                      message: 'Input canceled'
+                    })
+                  })
+              }
+            })
+            .catch(() => {
+              console.log('login fail!!!')
+              loading.value = false
+            })
         } else {
           console.log('error submit!!')
           return false
@@ -153,7 +210,6 @@ export default {
       password
     }
   }
-
 }
 </script>
 

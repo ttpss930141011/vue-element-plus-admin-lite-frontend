@@ -39,8 +39,10 @@ const actions = {
         .then((response) => {
           const { data } = response
           console.log(data)
-          commit('SET_TOKEN', data.token)
-          commit('SET_NAME', data.name)
+          const { token, name, avatar } = data
+          commit('SET_TOKEN', token)
+          commit('SET_NAME', name)
+          commit('SET_AVATAR', avatar)
           setToken(data.token)
           resolve()
         })
@@ -77,11 +79,12 @@ const actions = {
       userLogin({ account: account.trim(), password: password })
         .then((response) => {
           const { data } = response
-          console.log(data)
-          commit('SET_TOKEN', data.token)
+          const { token, name, avatar, emailIsExist } = data
+          commit('SET_TOKEN', token)
           setToken(data.token)
-          commit('SET_NAME', data.name)
-          resolve()
+          commit('SET_NAME', name)
+          commit('SET_AVATAR', avatar)
+          resolve({ emailIsExist: emailIsExist, account: account })
         })
         .catch((error) => {
           console.log(error)
@@ -93,16 +96,14 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
+      console.log('getInfo', state.token, state.name)
       getInfo(state.token)
         .then((response) => {
           const { data } = response
-
           if (!data) {
             return reject(new Error('Verification failed, please Login again.'))
           }
-
           const { name, avatar } = data
-
           commit('SET_NAME', name)
           commit('SET_AVATAR', avatar)
           resolve(data)
