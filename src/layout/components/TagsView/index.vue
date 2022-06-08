@@ -1,6 +1,10 @@
 <template>
   <div ref="dom" id="tags-view-container" class="tags-view-container">
-    <scroll-pane ref="scrollPaneRef" class="tags-view-wrapper" @scroll="handleScroll">
+    <scroll-pane
+      ref="scrollPaneRef"
+      class="tags-view-wrapper"
+      @scroll="handleScroll"
+    >
       <router-link
         v-for="tag in visitedViews"
         :ref="tagRef"
@@ -13,14 +17,23 @@
         @contextmenu.prevent="openMenu(tag, $event)"
       >
         {{ tag.title }}
-        <el-icon class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)">
+        <el-icon
+          class="el-icon-close"
+          @click.prevent.stop="closeSelectedTag(tag)"
+        >
           <close />
         </el-icon>
       </router-link>
     </scroll-pane>
-    <ul v-if="visible" :style="{ left: left + 'px', top: top + 'px' }" class="contextmenu">
+    <ul
+      v-if="visible"
+      :style="{ left: left + 'px', top: top + 'px' }"
+      class="contextmenu"
+    >
       <li @click="refreshSelectedTag(selectedTag)">刷新</li>
-      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">关闭</li>
+      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">
+        关闭
+      </li>
       <li @click="closeOthersTags">关闭其它</li>
       <li @click="closeAllTags(selectedTag)">关闭所有</li>
     </ul>
@@ -60,7 +73,7 @@ export default {
     }
     const filterAffixTags = (routeList, basePath = '/') => {
       let tags = []
-      routeList.value.forEach(route => {
+      routeList.value.forEach((route) => {
         if (route.meta && route.meta.affix) {
           const tagPath = path.resolve(basePath, route.path)
           tags.push({
@@ -80,7 +93,7 @@ export default {
       return tags
     }
     const initTags = () => {
-      const affixTag = affixTags.value = filterAffixTags(routes)
+      const affixTag = (affixTags.value = filterAffixTags(routes))
       for (const tag of affixTag) {
         if (tag.name) {
           store.dispatch('tagsView/addVisitedView', tag)
@@ -93,6 +106,30 @@ export default {
         store.dispatch('tagsView/addView', route)
       }
       return false
+    }
+    const beforeUpload = () => {
+      window.addEventListener('beforeunload', () => {
+        // visitedViews数据结构太复杂无法直接JSON.stringify处理，先转换需要的数据
+        console.log(visitedViews)
+        const tabViews = visitedViews.value.map((item) => {
+          return {
+            fullPath: item.fullPath,
+            hash: item.hash,
+            meta: { ...item.meta },
+            name: item.name,
+            params: { ...item.params },
+            path: item.path,
+            query: { ...item.query },
+            title: item.title
+          }
+        })
+        sessionStorage.setItem('tabViews', JSON.stringify(tabViews))
+      })
+      // 页面初始化加载判断缓存中是否有数据
+      const oldViews = JSON.parse(sessionStorage.getItem('tabViews')) || []
+      if (oldViews.length > 0) {
+        store.state.tagsView.visitedViews = oldViews
+      }
     }
     const moveToCurrentTag = () => {
       nextTick(() => {
@@ -134,7 +171,7 @@ export default {
     }
     function closeAllTags(view) {
       store.dispatch('tagsView/delAllViews').then(({ visitedViews }) => {
-        if (affixTags.value.some(tag => tag.path === view.path)) {
+        if (affixTags.value.some((tag) => tag.path === view.path)) {
           return
         }
         toLastView(visitedViews, view)
@@ -190,6 +227,7 @@ export default {
     onMounted(() => {
       initTags()
       addTags()
+      beforeUpload()
     })
     return {
       routes,
@@ -254,7 +292,7 @@ export default {
         color: #fff;
         border-color: $themColor;
         &::before {
-          content: "";
+          content: '';
           background: #fff;
           display: inline-block;
           width: 8px;
